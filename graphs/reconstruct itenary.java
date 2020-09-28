@@ -1,51 +1,27 @@
 class Solution {
-    public List<Integer> findMinHeightTrees(int n, int[][] edges) 
+    Map<String, PriorityQueue<String>> hm;
+    LinkedList<String> path;
+    
+    public List<String> findItinerary(List<List<String>> tickets) 
     {
-        ArrayList<Integer> arr = new ArrayList();
-        if(n==1)
+       hm = new HashMap();
+        path = new LinkedList();
+        for(List<String> tik : tickets)
         {
-            arr.add(0);
-            return arr;
+            hm.putIfAbsent(tik.get(0),new PriorityQueue());
+            hm.get(tik.get(0)).add(tik.get(1));
         }
-        ArrayList<ArrayList<Integer>> adj = new ArrayList();
-        for(int i=0; i<n; i++)
+         dfs("JFK");
+        return path;
+    }
+    public void dfs(String dept)
+    {
+        PriorityQueue<String> abs = hm.get(dept);
+        while(abs!=null && !abs.isEmpty())
         {
-            adj.add(new ArrayList<Integer>());
+            //String temp = abs.poll();
+            dfs(abs.poll());
         }
-        int degree[] = new int[n];
-        for(int[] key: edges)
-        {
-            adj.get(key[0]).add(key[1]);
-            adj.get(key[1]).add(key[0]);
-            degree[key[0]]++;
-            degree[key[1]]++;
-        }
-        
-        Queue<Integer> q = new LinkedList();
-        for(int i=0; i<n; i++)
-        {
-            if(degree[i]==1)
-                q.add(i);
-        }
-        int numleft=n;
-        while(!q.isEmpty())
-        {
-            if(numleft<=2)
-                break;
-            int size = q.size();
-            while(size-->0)
-            {
-            int u = q.poll();
-            numleft--;
-            for(int v: adj.get(u))
-            {
-                degree[v]--;
-                if(degree[v]==1)
-                    q.add(v);
-            }
-        }
-        }
-         arr.addAll(q);
-        return arr;
+        path.addFirst(dept);
     }
 }
